@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from core.grafico import resolver_metodo_grafico
 from core.simplex_tabla import resolver_simplex_tabla
 from core.simplex import resolver_simplex
-
+import os
 app = Flask(__name__)
 
 @app.route('/')
@@ -71,4 +71,5 @@ def metodo_simplex_tabla():
     return render_template('metodo_simplex_tabla.html', pasos=pasos, valor_optimo=valor_optimo)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
