@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h2><i class="fas fa-rocket"></i> Resuelve Problemas de Optimización</h2>
+    <p>Utiliza métodos avanzados de programación lineal para encontrar soluciones óptimas a tus problemas de optimización con restricciones lineales.</p>
+  </div>
+</section>
+
+<div class="main-container">
+  <!-- Sección de Métodos -->
+  <section class="methods-section">
+    <div class="text-center mb-5">
+      <h2 class="section-title">
+        <i class="fas fa-tools text-primary"></i> 
+        Selecciona tu Método de Resolución
+      </h2>
+      <p class="lead text-muted">Elige el método más adecuado según las características de tu problema</p>
+    </div>
+
+    <div class="methods-grid">
+      <div class="method-card">
+        <div class="method-icon">
+          <i class="fas fa-chart-area"></i>
+        </div>
+        <h3>Método Gráfico</h3>
+        <p>Ideal para problemas con 2 variables. Visualiza la región factible y encuentra la solución óptima gráficamente.</p>
+        <ul class="features-list">
+          <li>Problemas con 2 variables (x₁, x₂)</li>
+          <li>Visualización gráfica de restricciones</li>
+          <li>Identificación de la región factible</li>
+          <li>Evaluación de vértices</li>
+          <li>Solución visual e intuitiva</li>
+        </ul>
+        <div class="method-example">
+          <h5><i class="fas fa-lightbulb text-warning"></i> Ejemplo típico:</h5>
+          <p class="small text-muted">Maximizar: 3x₁ + 2x₂<br>
+          Sujeto a: x₁ + x₂ ≤ 4, 2x₁ + x₂ ≤ 6</p>
+        </div>
+        <a href="{{ url_for('metodo_grafico') }}" class="btn-custom">
+          <i class="fas fa-play"></i> Usar Método Gráfico
+        </a>
+      </div>
+
+      <div class="method-card">
+        <div class="method-icon">
+          <i class="fas fa-calculator"></i>
+        </div>
+        <h3>Método Simplex</h3>
+        <p>Algoritmo algebraico eficiente para resolver problemas de programación lineal de cualquier tamaño.</p>
+        <ul class="features-list">
+          <li>Cualquier número de variables</li>
+          <li>Manejo de restricciones múltiples</li>
+          <li>Algoritmo iterativo optimizado</li>
+          <li>Solución algebraica precisa</li>
+          <li>Análisis de sensibilidad</li>
+        </ul>
+        <div class="method-example">
+          <h5><i class="fas fa-lightbulb text-warning"></i> Ejemplo típico:</h5>
+          <p class="small text-muted">Maximizar: 2x₁ + 3x₂ + x₃<br>
+          Con múltiples restricciones complejas</p>
+        </div>
+        <a href="{{ url_for('metodo_simplex') }}" class="btn-custom">
+          <i class="fas fa-play"></i> Usar Método Simplex
+        </a>
+      </div>
+
+      <div class="method-card">
+        <div class="method-icon">
+          <i class="fas fa-table"></i>
+        </div>
+        <h3>Simplex con Tablas</h3>
+        <p>Implementación paso a paso del método Simplex mostrando todas las iteraciones en formato de tabla.</p>
+        <ul class="features-list">
+          <li>Visualización paso a paso</li>
+          <li>Tablas detalladas de cada iteración</li>
+          <li>Proceso de pivoteo explicado</li>
+          <li>Seguimiento de variables básicas</li>
+          <li>Comprensión completa del algoritmo</li>
+        </ul>
+        <div class="method-example">
+          <h5><i class="fas fa-lightbulb text-warning"></i> Ideal para:</h5>
+          <p class="small text-muted">Estudiantes y análisis detallado<br>
+          del proceso de optimización</p>
+        </div>
+        <a href="{{ url_for('metodo_simplex_tabla') }}" class="btn-custom">
+          <i class="fas fa-play"></i> Ver Simplex Detallado
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Guía de Uso Rápida -->
+  <section class="info-section">
+    <h2><i class="fas fa-map-marked-alt text-primary"></i> Guía de Uso Rápida</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <h4 class="card-title text-primary">
+              <i class="fas fa-question-circle"></i> ¿Qué método elegir?
+            </h4>
+            <div class="decision-tree">
+              <div class="decision-item">
+                <strong class="text-success">¿Tienes solo 2 variables?</strong>
+                <p class="text-muted mb-2">→ Usa el <strong>Método Gráfico</strong></p>
+              </div>
+              <div class="decision-item">
+                <strong class="text-info">¿Tienes más de 2 variables?</strong>
+                <p class="text-muted mb-2">→ Usa el <strong>Método Simplex</strong></p>
+              </div>
+              <div class="decision-item">
+                <strong class="text-warning">¿Quieres ver el proceso completo?</strong>
+                <p class="text-muted mb-0">→ Usa <strong>Simplex con Tablas</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+          <div class="card-body">
+            <h4 class="card-title text-primary">
+              <i class="fas fa-clipboard-list"></i> Pasos Generales
+            </h4>
+            <ol class="steps-list">
+              <li><strong>Define tu función objetivo</strong><br>
+                  <small class="text-muted">¿Qué quieres maximizar o minimizar?</small>
+              </li>
+              <li><strong>Identifica las variables</strong><br>
+                  <small class="text-muted">x₁, x₂, x₃... (cantidades a determinar)</small>
+              </li>
+              <li><strong>Establece las restricciones</strong><br>
+                  <small class="text-muted">Limitaciones del problema (≤, ≥, =)</small>
+              </li>
+              <li><strong>Ingresa los datos</strong><br>
+                  <small class="text-muted">Coeficientes y valores en la herramienta</small>
+              </li>
+              <li><strong>Analiza los resultados</strong><br>
+                  <small class="text-muted">Interpreta la solución óptima</small>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de Información sobre Programación Lineal -->
+  <section class="info-section">
+    <h2><i class="fas fa-graduation-cap text-primary"></i> ¿Qué es la Programación Lineal?</h2>
+    <div class="row mb-4">
+      <div class="col-lg-8">
+        <p class="lead">La programación lineal es una técnica de optimización matemática utilizada para encontrar la mejor solución posible a un problema con restricciones lineales.</p>
+        <p>Se caracteriza por tener una <strong>función objetivo lineal</strong> que se desea optimizar (maximizar o minimizar) y un conjunto de <strong>restricciones lineales</strong> que definen el espacio de soluciones factibles.</p>
+      </div>
+      <div class="col-lg-4">
+        <div class="alert alert-info border-0">
+          <h5><i class="fas fa-info-circle"></i> Componentes Clave</h5>
+          <ul class="mb-0 small">
+            <li><strong>Variables de decisión</strong></li>
+            <li><strong>Función objetivo</strong></li>
+            <li><strong>Restricciones</strong></li>
+            <li><strong>Condiciones de no negatividad</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="info-grid">
+      <div class="info-item">
+        <h4><i class="fas fa-industry text-primary"></i> Producción Industrial</h4>
+        <p>Optimización de recursos, planificación de producción y minimización de costos.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Una fábrica produce 2 tipos de productos con recursos limitados de tiempo y materiales.
+        </div>
+      </div>
+      <div class="info-item">
+        <h4><i class="fas fa-truck text-success"></i> Logística y Transporte</h4>
+        <p>Rutas óptimas, asignación de vehículos y distribución eficiente.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Minimizar costos de transporte desde almacenes a puntos de venta.
+        </div>
+      </div>
+      <div class="info-item">
+        <h4><i class="fas fa-chart-pie text-warning"></i> Finanzas</h4>
+        <p>Optimización de carteras de inversión y gestión de riesgos.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Maximizar rendimiento de inversiones con límites de riesgo.
+        </div>
+      </div>
+      <div class="info-item">
+        <h4><i class="fas fa-seedling text-info"></i> Agricultura</h4>
+        <p>Planificación de cultivos y optimización de recursos agrícolas.</p>
+        <div class="example-box">
+          <strong>Ejemplo:</strong> Maximizar producción agrícola con limitaciones de agua y fertilizantes.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ejemplos Detallados -->
+  <section class="info-section">
+    <h2><i class="fas fa-lightbulb text-warning"></i> Ejemplos Prácticos Resueltos</h2>
+    
+    <div class="accordion" id="ejemplosAccordion">
+      <!-- Ejemplo 1: Problema de Mezcla -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-light" id="ejemplo1">
+          <h5 class="mb-0">
+            <button class="btn btn-link text-decoration-none collapsed" type="button" data-toggle="collapse" data-target="#collapse1">
+              <i class="fas fa-flask text-primary"></i> Ejemplo 1: Problema de Mezcla de Productos
+            </button>
+          </h5>
+        </div>
+        <div id="collapse1" class="collapse" data-parent="#ejemplosAccordion">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <h6 class="text-primary">Situación:</h6>
+                <p>Una empresa produce dos tipos de productos: A y B. Cada producto A genera $3 de ganancia y cada producto B genera $2 de ganancia.</p>
+                
+                <h6 class="text-primary">Restricciones:</h6>
+                <ul>
+                  <li>Tiempo de producción: 1 hora para A, 1 hora para B (máximo 4 horas)</li>
+                  <li>Material: 2 kg para A, 1 kg para B (máximo 6 kg disponibles)</li>
+                  <li>No se pueden producir cantidades negativas</li>
+                </ul>
+                
+                <h6 class="text-primary">Formulación:</h6>
+                <div class="bg-light p-3 rounded">
+                  <strong>Maximizar:</strong> Z = 3x₁ + 2x₂<br>
+                  <strong>Sujeto a:</strong><br>
+                  x₁ + x₂ ≤ 4 (tiempo)<br>
+                  2x₁ + x₂ ≤ 6 (material)<br>
+                  x₁, x₂ ≥ 0
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="alert alert-success">
+                  <h6><i class="fas fa-star"></i> Método Recomendado:</h6>
+                  <p class="mb-2"><strong>Método Gráfico</strong></p>
+                  <small>Perfecto para visualizar este problema de 2 variables</small>
+                  <hr>
+                  <a href="{{ url_for('metodo_grafico') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-play"></i> Resolver Ahora
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ejemplo 2: Problema de Transporte -->
+      <div class="card border-0 shadow-sm mb-3">
+        <div class="card-header bg-light" id="ejemplo2">
+          <h5 class="mb-0">
+            <button class="btn btn-link text-decoration-none collapsed" type="button" data-toggle="collapse" data-target="#collapse2">
+              <i class="fas fa-truck text-success"></i> Ejemplo 2: Problema de Asignación de Recursos
+            </button>
+          </h5>
+        </div>
+        <div id="collapse2" class="collapse" data-parent="#ejemplosAccordion">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <h6 class="text-primary">Situación:</h6>
+                <p>Una empresa debe asignar personal a tres proyectos diferentes para maximizar la eficiencia total.</p>
+                
+                <h6 class="text-primary">Variables:</h6>
+                <ul>
+                  <li>x₁ = horas asignadas al proyecto A</li>
+                  <li>x₂ = horas asignadas al proyecto B</li>
+                  <li>x₃ = horas asignadas al proyecto C</li>
+                </ul>
+                
+                <h6 class="text-primary">Formulación:</h6>
+                <div class="bg-light p-3 rounded">
+                  <strong>Maximizar:</strong> Z = 2x₁ + 3x₂ + x₃<br>
+                  <strong>Sujeto a:</strong><br>
+                  x₁ + x₂ + x₃ ≤ 40 (horas totales)<br>
+                  2x₁ + x₂ ≤ 50 (restricción técnica)<br>
+                  x₂ + 2x₃ ≤ 45 (restricción de recursos)<br>
+                  x₁, x₂, x₃ ≥ 0
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="alert alert-info">
+                  <h6><i class="fas fa-calculator"></i> Método Recomendado:</h6>
+                  <p class="mb-2"><strong>Método Simplex</strong></p>
+                  <small>Ideal para problemas con más de 2 variables</small>
+                  <hr>
+                  <a href="{{ url_for('metodo_simplex') }}" class="btn btn-info btn-sm">
+                    <i class="fas fa-play"></i> Resolver Ahora
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ejemplo 3: Problema de Dieta -->
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-light" id="ejemplo3">
+          <h5 class="mb-0">
+            <button class="btn btn-link text-decoration-none collapsed" type="button" data-toggle="collapse" data-target="#collapse3">
+              <i class="fas fa-apple-alt text-warning"></i> Ejemplo 3: Problema de Dieta Óptima
+            </button>
+          </h5>
+        </div>
+        <div id="collapse3" class="collapse" data-parent="#ejemplosAccordion">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <h6 class="text-primary">Situación:</h6>
+                <p>Planificar una dieta que satisfaga requerimientos nutricionales al menor costo posible.</p>
+                
+                <h6 class="text-primary">Variables:</h6>
+                <ul>
+                  <li>x₁ = cantidad de alimento tipo 1</li>
+                  <li>x₂ = cantidad de alimento tipo 2</li>
+                </ul>
+                
+                <h6 class="text-primary">Formulación:</h6>
+                <div class="bg-light p-3 rounded">
+                  <strong>Minimizar:</strong> Z = 0.60x₁ + 0.35x₂ (costo)<br>
+                  <strong>Sujeto a:</strong><br>
+                  2x₁ + x₂ ≥ 12 (vitaminas)<br>
+                  x₁ + x₂ ≥ 8 (proteínas)<br>
+                  x₁, x₂ ≥ 0
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="alert alert-warning">
+                  <h6><i class="fas fa-chart-area"></i> Método Recomendado:</h6>
+                  <p class="mb-2"><strong>Método Gráfico</strong></p>
+                  <small>Problema de minimización con 2 variables</small>
+                  <hr>
+                  <a href="{{ url_for('metodo_grafico') }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-play"></i> Resolver Ahora
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Consejos y Tips -->
+  <section class="info-section">
+    <h2><i class="fas fa-tips text-info"></i> Consejos para Mejores Resultados</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="tip-card">
+          <h5><i class="fas fa-check-circle text-success"></i> Mejores Prácticas</h5>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-arrow-right text-primary"></i> Define claramente tu objetivo</li>
+            <li><i class="fas fa-arrow-right text-primary"></i> Identifica todas las restricciones</li>
+            <li><i class="fas fa-arrow-right text-primary"></i> Verifica que las restricciones sean lineales</li>
+            <li><i class="fas fa-arrow-right text-primary"></i> Considera las condiciones de no negatividad</li>
+            <li><i class="fas fa-arrow-right text-primary"></i> Valida la solución en el contexto real</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="tip-card">
+          <h5><i class="fas fa-exclamation-triangle text-warning"></i> Errores Comunes</h5>
+          <ul class="list-unstyled">
+            <li><i class="fas fa-times text-danger"></i> Confundir maximización con minimización</li>
+            <li><i class="fas fa-times text-danger"></i> Omitir restricciones importantes</li>
+            <li><i class="fas fa-times text-danger"></i> Usar relaciones no lineales</li>
+            <li><i class="fas fa-times text-danger"></i> Ignorar las unidades de medida</li>
+            <li><i class="fas fa-times text-danger"></i> No verificar la factibilidad</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section text-center">
+    <div class="card border-0 bg-primary text-white">
+      <div class="card-body py-5">
+        <h3><i class="fas fa-rocket"></i> ¡Comienza a Optimizar Ahora!</h3>
+        <p class="lead mb-4">Selecciona el método que mejor se adapte a tu problema y encuentra la solución óptima en minutos.</p>
+        <div class="row justify-content-center">
+          <div class="col-md-4 mb-3">
+            <a href="{{ url_for('metodo_grafico') }}" class="btn btn-light btn-lg btn-block">
+              <i class="fas fa-chart-area text-primary"></i><br>
+              <strong>Método Gráfico</strong><br>
+              <small>Para 2 variables</small>
+            </a>
+          </div>
+          <div class="col-md-4 mb-3">
+            <a href="{{ url_for('metodo_simplex') }}" class="btn btn-light btn-lg btn-block">
+              <i class="fas fa-calculator text-success"></i><br>
+              <strong>Método Simplex</strong><br>
+              <small>Para múltiples variables</small>
+            </a>
+          </div>
+          <div class="col-md-4 mb-3">
+            <a href="{{ url_for('metodo_simplex_tabla') }}" class="btn btn-light btn-lg btn-block">
+              <i class="fas fa-table text-info"></i><br>
+              <strong>Simplex Detallado</strong><br>
+              <small>Paso a paso</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+/* Estilos adicionales específicos para el index */
+.methods-section {
+  margin: 3rem 0;
+}
+
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--color-primario);
+  margin-bottom: 1rem;
+}
+
+.method-example {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  border-left: 3px solid var(--color-acento);
+}
+
+.method-example h5 {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.decision-tree .decision-item {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.decision-tree .decision-item:last-child {
+  border-bottom: none;
+}
+
+.steps-list {
+  padding-left: 1.2rem;
+}
+
+.steps-list li {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.example-box {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.tip-card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  height: 100%;
+}
+
+.tip-card ul li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.tip-card ul li:last-child {
+  border-bottom: none;
+}
+
+.cta-section {
+  margin: 4rem 0 2rem;
+}
+
+.cta-section .btn {
+  transition: all 0.3s ease;
+}
+
+.cta-section .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .methods-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cta-section .col-md-4 {
+    margin-bottom: 1rem;
+  }
+}
+</style>
+{% endblock %}

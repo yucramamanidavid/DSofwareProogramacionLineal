@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="section-title">Método Simplex (Directo)</h2>
+
+    <form method="post">
+        <div class="form-group">
+            <label><strong>Función Objetivo:</strong></label>
+            <input type="text" name="objetivo" placeholder="Ej: 3x1+5x2" required>
+        </div>
+
+        <div class="form-group">
+            <label><strong>Tipo de Optimización:</strong></label>
+            <select name="tipo">
+                <option value="max">Maximizar</option>
+                <option value="min">Minimizar</option>
+            </select>
+        </div>
+
+        <div id="restricciones">
+            <h4>Restricciones</h4>
+            <div class="restriccion">
+                <input type="number" step="any" name="a[]" placeholder="Coef. x1" required>
+                x₁ +
+                <input type="number" step="any" name="b[]" placeholder="Coef. x2" required>
+                x₂
+                <select name="signo[]">
+                    <option value="<=">&le;</option>
+                    <option value=">=">&ge;</option>
+                    <option value="=">=</option>
+                </select>
+                <input type="number" step="any" name="rhs[]" placeholder="Valor RHS" required>
+            </div>
+        </div>
+
+        <button type="button" class="btn" onclick="agregarRestriccion()">+ Añadir Restricción</button><br><br>
+        <button type="submit" class="btn">Resolver</button>
+    </form>
+
+    {% if resultado %}
+        <hr>
+        <h3>Resultado</h3>
+        <div class="resultado-text">
+            {{ resultado|safe }}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function agregarRestriccion() {
+    const container = document.getElementById("restricciones");
+    const div = document.createElement("div");
+    div.className = "restriccion";
+    div.style.marginBottom = "10px";
+    div.innerHTML = `
+        <input type="number" step="any" name="a[]" placeholder="Coef. x1" required>
+        x₁ +
+        <input type="number" step="any" name="b[]" placeholder="Coef. x2" required>
+        x₂
+        <select name="signo[]">
+            <option value="<=">&le;</option>
+            <option value=">=">&ge;</option>
+            <option value="=">=</option>
+        </select>
+        <input type="number" step="any" name="rhs[]" placeholder="Valor RHS" required>
+    `;
+    container.appendChild(div);
+}
+</script>
+{% endblock %}

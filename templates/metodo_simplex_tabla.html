@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+
+  <!-- Encabezado -->
+  <div class="text-center mb-4">
+    <h1 class="h2">Método Simplex – Tabla</h1>
+    <p class="text-muted">Sigue paso a paso tu solución</p>
+  </div>
+
+  <!-- Formulario de entrada -->
+  <div class="card mb-5 shadow-sm">
+    <div class="card-body">
+      <form method="post">
+        <div class="form-row">
+          <div class="form-group col-md-8">
+            <label><strong>Función Objetivo</strong></label>
+            <input type="text" class="form-control" name="objetivo" placeholder="Ej: 3x1 + 2x2" required>
+          </div>
+          <div class="form-group col-md-4">
+            <label><strong>Tipo</strong></label>
+            <select name="tipo" class="form-control">
+              <option value="max">Maximizar</option>
+              <option value="min">Minimizar</option>
+            </select>
+          </div>
+        </div>
+
+        <hr>
+
+        <h5>Restricciones</h5>
+        <div id="restricciones" class="mb-3">
+          <div class="form-row align-items-center restriccion-row mb-2">
+            <div class="col-auto">
+              <input type="number" step="any" class="form-control form-control-sm" name="a[]" placeholder="Coef. x₁" required>
+            </div>
+            <div class="col-auto">x₁ +</div>
+            <div class="col-auto">
+              <input type="number" step="any" class="form-control form-control-sm" name="b[]" placeholder="Coef. x₂" required>
+            </div>
+            <div class="col-auto">x₂</div>
+            <div class="col-auto">
+              <select name="signo[]" class="form-control form-control-sm">
+                <option value="<=">&le;</option>
+                <option value=">=">&ge;</option>
+                <option value="=">=</option>
+              </select>
+            </div>
+            <div class="col-auto">
+              <input type="number" step="any" class="form-control form-control-sm" name="rhs[]" placeholder="RHS" required>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="agregarRestriccion()">
+          + Añadir restricción
+        </button>
+        <button type="submit" class="btn btn-primary float-right">Resolver</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resultado -->
+  <div class="result-section">
+    <h3 class="mb-3">Resultado</h3>
+
+    {% if pasos %}
+      <div class="alert alert-success">
+        <strong>Valor Óptimo:</strong>
+        {{ valor_optimo if valor_optimo is not none else 'No calculado' }}
+      </div>
+
+      {% for iter, tabla_html, col, fila, explicacion in pasos %}
+      <details class="mb-4" {% if loop.first %}open{% endif %}>
+        <summary class="font-weight-bold">
+          🔁 Iteración {{ iter }}
+        </summary>
+
+        <div class="mt-2 mb-3">
+          <pre class="bg-light p-3" style="border-radius:4px; white-space: pre-wrap;">
+{{ explicacion.strip() }}
+          </pre>
+        </div>
+
+        <div class="table-responsive mb-2">
+          {{ tabla_html | safe }}
+        </div>
+      </details>
+      {% endfor %}
+    {% else %}
+      <div class="text-center text-secondary">
+        Complete los datos y haga clic en <strong>Resolver</strong> para ver los pasos.
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Script para añadir restricciones dinámicamente -->
+<script>
+function agregarRestriccion() {
+  const cont = document.getElementById("restricciones");
+  const row = document.querySelector(".restriccion-row");
+  const clone = row.cloneNode(true);
+  // Limpia los valores
+  clone.querySelectorAll("input").forEach(i => i.value = "");
+  cont.appendChild(clone);
+}
+</script>
+{% endblock %}
