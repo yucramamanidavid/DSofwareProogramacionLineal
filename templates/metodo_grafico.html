@@ -1,67 +1,690 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container">
-    <h2 class="section-title">Método Gráfico</h2>
+<section class="hero-section">
+  <div class="hero-content">
+    <h2><i class="fas fa-chart-area text-white"></i> Método Gráfico</h2>
+    <p class="hero-subtitle">Resuelve problemas de programación lineal con 2 variables de forma visual e intuitiva</p>
+  </div>
+</section>
 
-    <form method="post">
-        <div style="margin-bottom: 20px;">
-            <label><strong>Función Objetivo:</strong></label><br>
-            <input type="text" name="objetivo" placeholder="Ej: 3x1+4x2" required style="width: 100%; padding: 10px;">
+<div class="main-container">
+  <!-- Información del Método -->
+  <div class="method-info-card">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h3><i class="fas fa-info-circle text-primary"></i> Acerca del Método Gráfico</h3>
+        <p class="mb-2">El método gráfico es ideal para problemas de programación lineal con <strong>2 variables</strong>. Te permite:</p>
+        <div class="features-grid">
+          <div class="feature-item">
+            <i class="fas fa-eye text-success"></i>
+            <span>Visualizar la región factible</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-crosshairs text-info"></i>
+            <span>Identificar vértices óptimos</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-chart-line text-warning"></i>
+            <span>Graficar función objetivo</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-bullseye text-danger"></i>
+            <span>Encontrar solución óptima</span>
+          </div>
         </div>
-
-        <div style="margin-bottom: 20px;">
-            <label><strong>Tipo de Optimización:</strong></label><br>
-            <select name="tipo" style="width: 100%; padding: 10px;">
-                <option value="max">Maximizar</option>
-                <option value="min">Minimizar</option>
-            </select>
+      </div>
+      <div class="col-md-4 text-center">
+        <div class="method-visual">
+          <i class="fas fa-chart-area fa-4x text-primary opacity-20"></i>
+          <div class="method-badge">
+            <span class="badge badge-primary">2 Variables</span>
+            <span class="badge badge-success">Solución Visual</span>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div id="restricciones">
-            <h4>Restricciones</h4>
-            <div class="restriccion" style="margin-bottom: 10px;">
-                <input type="number" step="any" name="a[]" placeholder="Coef. x1" required>
-                x₁ +
-                <input type="number" step="any" name="b[]" placeholder="Coef. x2" required>
-                x₂
-                <select name="signo[]">
-                    <option value="<=">&le;</option>
-                    <option value=">=">&ge;</option>
-                    <option value="=">=</option>
-                </select>
-                <input type="number" step="any" name="rhs[]" placeholder="Valor RHS" required>
+  <!-- Formulario Principal -->
+  <div class="form-container">
+    <form method="post" id="optimizationForm" class="needs-validation" novalidate>
+      
+      <!-- Función Objetivo -->
+      <div class="form-section">
+        <div class="section-header">
+          <h4><i class="fas fa-target text-primary"></i> Función Objetivo</h4>
+          <p class="text-muted">Define qué quieres optimizar (maximizar o minimizar)</p>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group">
+              <label class="form-label">Función a Optimizar:</label>
+              <div class="input-group input-group-lg">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><i class="fas fa-function"></i></span>
+                </div>
+                <input type="text" 
+                       name="objetivo" 
+                       class="form-control" 
+                       placeholder="Ejemplo: 3x1 + 4x2" 
+                       required
+                       pattern="^[0-9x+\-\s]+$">
+                <div class="invalid-feedback">
+                  Ingresa una función válida (ej: 3x1 + 4x2)
+                </div>
+              </div>
+              <small class="form-text text-muted">
+                <i class="fas fa-lightbulb text-warning"></i> 
+                Usa x1 y x2 para las variables. Ejemplo: 3x1 + 4x2, 5x1 - 2x2
+              </small>
             </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label">Tipo de Optimización:</label>
+              <select name="tipo" class="form-control form-control-lg custom-select">
+                <option value="max">
+                  <i class="fas fa-arrow-up"></i> Maximizar
+                </option>
+                <option value="min">
+                  <i class="fas fa-arrow-down"></i> Minimizar
+                </option>
+              </select>
+            </div>
+          </div>
         </div>
-        <button type="button" class="btn" onclick="agregarRestriccion()">+ Añadir Restricción</button><br><br>
-        <button type="submit" class="btn">Resolver</button>
-    </form>
+      </div>
 
-    {% if resultado %}
-        <hr>
-        <h3>Resultado</h3>
-        <div>{{ resultado|safe }}</div>
-    {% endif %}
+      <!-- Restricciones -->
+      <div class="form-section">
+        <div class="section-header">
+          <h4><i class="fas fa-shield-alt text-success"></i> Restricciones</h4>
+          <p class="text-muted">Define las limitaciones de tu problema</p>
+        </div>
+
+        <div id="restricciones-container">
+          <!-- Restricción inicial -->
+          <div class="restriccion-card" data-restriccion="1">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="fas fa-grip-vertical text-muted"></i>
+                Restricción #<span class="restriccion-numero">1</span>
+                <button type="button" class="btn btn-sm btn-outline-danger float-right eliminar-restriccion" title="Eliminar restricción">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </h6>
+            </div>
+            <div class="card-body">
+              <div class="restriccion-form">
+                <div class="coeficiente-group">
+                  <input type="number" 
+                         step="any" 
+                         name="a[]" 
+                         class="form-control coef-input" 
+                         placeholder="0" 
+                         required>
+                  <span class="variable-label">x₁</span>
+                </div>
+                
+                <span class="operador">+</span>
+                
+                <div class="coeficiente-group">
+                  <input type="number" 
+                         step="any" 
+                         name="b[]" 
+                         class="form-control coef-input" 
+                         placeholder="0" 
+                         required>
+                  <span class="variable-label">x₂</span>
+                </div>
+                
+                <select name="signo[]" class="form-control signo-select">
+                  <option value="<=">&le;</option>
+                  <option value=">=">&ge;</option>
+                  <option value="=">=</option>
+                </select>
+                
+                <input type="number" 
+                       step="any" 
+                       name="rhs[]" 
+                       class="form-control rhs-input" 
+                       placeholder="Valor" 
+                       required>
+              </div>
+              <div class="restriccion-preview">
+                <small class="text-muted">
+                  <i class="fas fa-eye"></i> Vista previa: 
+                  <span class="preview-text">0x₁ + 0x₂ ≤ 0</span>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="restricciones-actions">
+          <button type="button" 
+                  class="btn btn-outline-primary" 
+                  id="agregar-restriccion">
+            <i class="fas fa-plus"></i> Añadir Restricción
+          </button>
+          <div class="restricciones-info">
+            <small class="text-muted">
+              <i class="fas fa-info-circle"></i> 
+              Restricciones actuales: <span id="contador-restricciones">1</span>
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ejemplo Rápido -->
+      <div class="example-section">
+        <div class="card border-info">
+          <div class="card-header bg-light">
+            <h6 class="mb-0 text-info">
+              <i class="fas fa-lightbulb"></i> Ejemplo Rápido
+              <button type="button" class="btn btn-sm btn-info float-right" id="cargar-ejemplo">
+                Cargar Ejemplo
+              </button>
+            </h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <strong>Problema:</strong> Una empresa produce productos A y B
+                <br><strong>Función:</strong> Maximizar 3x₁ + 2x₂
+              </div>
+              <div class="col-md-6">
+                <strong>Restricciones:</strong>
+                <br>• x₁ + x₂ ≤ 4 (tiempo)
+                <br>• 2x₁ + x₂ ≤ 6 (material)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <i class="fas fa-calculator"></i> Resolver Problema
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-lg" id="limpiar-form">
+          <i class="fas fa-eraser"></i> Limpiar Todo
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Resultados -->
+  {% if resultado %}
+  <div class="results-container">
+    <div class="results-header">
+      <h3><i class="fas fa-chart-line text-success"></i> Resultados del Método Gráfico</h3>
+      <p class="text-muted">Solución óptima encontrada</p>
+    </div>
+    <div class="results-content">
+      {{ resultado|safe }}
+    </div>
+    <div class="results-actions">
+      <button class="btn btn-success" onclick="window.print()">
+        <i class="fas fa-print"></i> Imprimir Resultados
+      </button>
+      <button class="btn btn-info" onclick="location.reload()">
+        <i class="fas fa-redo"></i> Resolver Otro Problema
+      </button>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
+<style>
+/* Estilos específicos para el método gráfico */
+.hero-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 3rem 0;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.hero-content h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.method-info-card {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border: 1px solid #e3f2fd;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.method-visual {
+  position: relative;
+  padding: 2rem;
+}
+
+.method-badge {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.method-badge .badge {
+  display: block;
+  margin: 0.2rem 0;
+}
+
+.form-container {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.form-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-header h4 {
+  color: var(--color-texto);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--color-texto);
+  margin-bottom: 0.5rem;
+}
+
+.restriccion-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.restriccion-card:hover {
+  border-color: var(--color-primario);
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.1);
+}
+
+.restriccion-card .card-header {
+  background: #e9ecef;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 10px 10px 0 0;
+  padding: 0.75rem 1rem;
+}
+
+.restriccion-card .card-body {
+  padding: 1.5rem;
+}
+
+.restriccion-form {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.coeficiente-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.coef-input {
+  width: 80px;
+  text-align: center;
+}
+
+.variable-label {
+  font-weight: 600;
+  color: var(--color-primario);
+  font-size: 1.1rem;
+}
+
+.operador {
+  font-weight: bold;
+  color: var(--color-secundario);
+  font-size: 1.2rem;
+}
+
+.signo-select {
+  width: 80px;
+  text-align: center;
+}
+
+.rhs-input {
+  width: 100px;
+  text-align: center;
+}
+
+.restriccion-preview {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #e9ecef;
+}
+
+.restricciones-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.example-section {
+  margin: 2rem 0;
+}
+
+.form-actions {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.form-actions .btn {
+  margin: 0 0.5rem;
+  min-width: 180px;
+}
+
+.results-container {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border-left: 5px solid var(--color-exito);
+}
+
+.results-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.results-content {
+  margin: 2rem 0;
+}
+
+.results-actions {
+  text-align: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.results-actions .btn {
+  margin: 0 0.5rem;
+}
+
+.opacity-20 {
+  opacity: 0.2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-content h2 {
+    font-size: 2rem;
+  }
+  
+  .restriccion-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .coeficiente-group, .signo-select, .rhs-input {
+    width: 100%;
+  }
+  
+  .restricciones-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .form-actions .btn {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+}
+
+/* Animaciones */
+.restriccion-card {
+  animation: slideInUp 0.3s ease;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+
 <script>
-function agregarRestriccion() {
-    const container = document.getElementById("restricciones");
-    const div = document.createElement("div");
-    div.className = "restriccion";
-    div.style.marginBottom = "10px";
-    div.innerHTML = `
-        <input type="number" step="any" name="a[]" placeholder="Coef. x1" required>
-        x₁ +
-        <input type="number" step="any" name="b[]" placeholder="Coef. x2" required>
-        x₂
-        <select name="signo[]">
+document.addEventListener('DOMContentLoaded', function() {
+  let contadorRestricciones = 1;
+  
+  // Función para actualizar vistas previas
+  function actualizarVistaPrevia(restriccionCard) {
+    const a = restriccionCard.querySelector('input[name="a[]"]').value || '0';
+    const b = restriccionCard.querySelector('input[name="b[]"]').value || '0';
+    const signo = restriccionCard.querySelector('select[name="signo[]"]').value;
+    const rhs = restriccionCard.querySelector('input[name="rhs[]"]').value || '0';
+    
+    let signoTexto = signo;
+    if (signo === '<=') signoTexto = '≤';
+    if (signo === '>=') signoTexto = '≥';
+    
+    const preview = `${a}x₁ + ${b}x₂ ${signoTexto} ${rhs}`;
+    restriccionCard.querySelector('.preview-text').textContent = preview;
+  }
+  
+  // Función para agregar restricción
+  function agregarRestriccion() {
+    contadorRestricciones++;
+    const container = document.getElementById('restricciones-container');
+    
+    const nuevaRestriccion = document.createElement('div');
+    nuevaRestriccion.className = 'restriccion-card';
+    nuevaRestriccion.setAttribute('data-restriccion', contadorRestricciones);
+    nuevaRestriccion.innerHTML = `
+      <div class="card-header">
+        <h6 class="mb-0">
+          <i class="fas fa-grip-vertical text-muted"></i>
+          Restricción #<span class="restriccion-numero">${contadorRestricciones}</span>
+          <button type="button" class="btn btn-sm btn-outline-danger float-right eliminar-restriccion" title="Eliminar restricción">
+            <i class="fas fa-trash"></i>
+          </button>
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="restriccion-form">
+          <div class="coeficiente-group">
+            <input type="number" step="any" name="a[]" class="form-control coef-input" placeholder="0" required>
+            <span class="variable-label">x₁</span>
+          </div>
+          <span class="operador">+</span>
+          <div class="coeficiente-group">
+            <input type="number" step="any" name="b[]" class="form-control coef-input" placeholder="0" required>
+            <span class="variable-label">x₂</span>
+          </div>
+          <select name="signo[]" class="form-control signo-select">
             <option value="<=">&le;</option>
             <option value=">=">&ge;</option>
             <option value="=">=</option>
-        </select>
-        <input type="number" step="any" name="rhs[]" placeholder="Valor RHS" required>
+          </select>
+          <input type="number" step="any" name="rhs[]" class="form-control rhs-input" placeholder="Valor" required>
+        </div>
+        <div class="restriccion-preview">
+          <small class="text-muted">
+            <i class="fas fa-eye"></i> Vista previa: 
+            <span class="preview-text">0x₁ + 0x₂ ≤ 0</span>
+          </small>
+        </div>
+      </div>
     `;
-    container.appendChild(div);
-}
+    
+    container.appendChild(nuevaRestriccion);
+    actualizarContador();
+    
+    // Agregar event listeners a la nueva restricción
+    agregarEventListenersRestriccion(nuevaRestriccion);
+  }
+  
+  // Función para eliminar restricción
+  function eliminarRestriccion(button) {
+    const restriccionCard = button.closest('.restriccion-card');
+    if (document.querySelectorAll('.restriccion-card').length > 1) {
+      restriccionCard.remove();
+      actualizarNumeracion();
+      actualizarContador();
+    } else {
+      alert('Debe mantener al menos una restricción');
+    }
+  }
+  
+  // Función para actualizar numeración
+  function actualizarNumeracion() {
+    const restricciones = document.querySelectorAll('.restriccion-card');
+    restricciones.forEach((restriccion, index) => {
+      restriccion.querySelector('.restriccion-numero').textContent = index + 1;
+    });
+  }
+  
+  // Función para actualizar contador
+  function actualizarContador() {
+    document.getElementById('contador-restricciones').textContent = 
+      document.querySelectorAll('.restriccion-card').length;
+  }
+  
+  // Función para agregar event listeners a una restricción
+  function agregarEventListenersRestriccion(restriccionCard) {
+    // Vista previa
+    const inputs = restriccionCard.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      input.addEventListener('input', () => actualizarVistaPrevia(restriccionCard));
+    });
+    
+    // Eliminar restricción
+    const btnEliminar = restriccionCard.querySelector('.eliminar-restriccion');
+    btnEliminar.addEventListener('click', () => eliminarRestriccion(btnEliminar));
+  }
+  
+  // Event listeners principales
+  document.getElementById('agregar-restriccion').addEventListener('click', agregarRestriccion);
+  
+  // Event listeners para restricciones existentes
+  document.querySelectorAll('.restriccion-card').forEach(restriccion => {
+    agregarEventListenersRestriccion(restriccion);
+  });
+  
+  // Cargar ejemplo
+  document.getElementById('cargar-ejemplo').addEventListener('click', function() {
+    // Limpiar restricciones existentes
+    document.getElementById('restricciones-container').innerHTML = '';
+    contadorRestricciones = 0;
+    
+    // Cargar función objetivo
+    document.querySelector('input[name="objetivo"]').value = '3x1+2x2';
+    document.querySelector('select[name="tipo"]').value = 'max';
+    
+    // Agregar restricciones del ejemplo
+    agregarRestriccion();
+    const restriccion1 = document.querySelector('.restriccion-card:last-child');
+    restriccion1.querySelector('input[name="a[]"]').value = '1';
+    restriccion1.querySelector('input[name="b[]"]').value = '1';
+    restriccion1.querySelector('select[name="signo[]"]').value = '<=';
+    restriccion1.querySelector('input[name="rhs[]"]').value = '4';
+    actualizarVistaPrevia(restriccion1);
+    
+    agregarRestriccion();
+    const restriccion2 = document.querySelector('.restriccion-card:last-child');
+    restriccion2.querySelector('input[name="a[]"]').value = '2';
+    restriccion2.querySelector('input[name="b[]"]').value = '1';
+    restriccion2.querySelector('select[name="signo[]"]').value = '<=';
+    restriccion2.querySelector('input[name="rhs[]"]').value = '6';
+    actualizarVistaPrevia(restriccion2);
+  });
+  
+  // Limpiar formulario
+  document.getElementById('limpiar-form').addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que quieres limpiar todo el formulario?')) {
+      document.getElementById('optimizationForm').reset();
+      // Resetear restricciones a solo una
+      document.getElementById('restricciones-container').innerHTML = '';
+      contadorRestricciones = 0;
+      agregarRestriccion();
+    }
+  });
+  
+  // Validación del formulario
+  document.getElementById('optimizationForm').addEventListener('submit', function(e) {
+    if (!this.checkValidity()) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    this.classList.add('was-validated');
+  });
+  
+  // Inicializar vista previa en la restricción inicial
+  const restriccionInicial = document.querySelector('.restriccion-card');
+  if (restriccionInicial) {
+    actualizarVistaPrevia(restriccionInicial);
+  }
+});
 </script>
 {% endblock %}
